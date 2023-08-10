@@ -26,6 +26,13 @@ class CharacterPrompts:
         # Get similarity scores
         sentence_similarity_scores = key_embeddings @ query_embedding
 
+        # Get vector norms
+        key_embedding_norms = np.linalg.norm(key_embeddings, axis=1)
+        query_embedding_norm = np.linalg.norm(query_embedding)
+
+        # Normalize sentence similarity scores
+        sentence_similarity_scores = sentence_similarity_scores / (key_embedding_norms * query_embedding_norm)
+
         if weighted:
             # Weight similarity score according to importance ratings
             weighted_sentence_similarity_scores = np.multiply(sentence_similarity_scores, np.asarray(self.key_ratings)/10)
@@ -70,6 +77,13 @@ def get_priority(query, keys, key_ratings, sentence_model, weighted, verbose=Tru
 
     # Get similarity scores
     sentence_similarity_scores = key_embeddings @ query_embedding
+
+    # Get vector norms
+    key_embedding_norms = np.linalg.norm(key_embeddings, axis=1)
+    query_embedding_norm = np.linalg.norm(query_embedding)
+
+    # Normalize sentence similarity scores
+    sentence_similarity_scores = sentence_similarity_scores / (key_embedding_norms * query_embedding_norm)
 
     if weighted:
         # Weight similarity score according to importance ratings
