@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 
 
-class CharacterPrompts:
+class Memory:
     def __init__(self, key_sentences, key_sentence_ratings):
         self.key_sentences = key_sentences
         self.key_ratings = key_sentence_ratings
@@ -14,7 +14,7 @@ class CharacterPrompts:
         self.key_sentences.append(sentence)
         self.key_ratings.append(rating)
 
-    def get_priority(self, query, sentence_model, weighted, verbose=False):
+    def get_similarity_scores(self, query, sentence_model, normalize=True):
         # Embed keys
         key_embeddings = sentence_model.encode(self.key_sentences)
         # print(key_embeddings)
@@ -26,12 +26,19 @@ class CharacterPrompts:
         # Get similarity scores
         sentence_similarity_scores = key_embeddings @ query_embedding
 
-        # Get vector norms
-        key_embedding_norms = np.linalg.norm(key_embeddings, axis=1)
-        query_embedding_norm = np.linalg.norm(query_embedding)
+        if normalize:
+            # Get vector norms
+            key_embedding_norms = np.linalg.norm(key_embeddings, axis=1)
+            query_embedding_norm = np.linalg.norm(query_embedding)
 
-        # Normalize sentence similarity scores
-        sentence_similarity_scores = sentence_similarity_scores / (key_embedding_norms * query_embedding_norm)
+            # Normalize sentence similarity scores
+            sentence_similarity_scores = sentence_similarity_scores / (key_embedding_norms * query_embedding_norm)
+
+        return sentence_similarity_scores
+
+    def get_priority(self, query, sentence_model, weighted, verbose=False):
+
+        sentence_similarity_scores = self.get_similarity_scores(query, sentence_model)
 
         if weighted:
             # Weight similarity score according to importance ratings
