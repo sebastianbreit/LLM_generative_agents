@@ -1,15 +1,15 @@
-from sentence_embedding import Memory
+from memory import Memory
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
 
 def main():
     """
-        sentence_model = SentenceTransformer(
-            'sentence-transformers/all-MiniLM-L6-v2',
-            cache_folder='all-MiniLM-L6-v2'
-        )
-        """
+    sentence_model = SentenceTransformer(
+        'sentence-transformers/all-MiniLM-L6-v2',
+        cache_folder='all-MiniLM-L6-v2'
+    )
+    """
 
     sentence_model = SentenceTransformer(
         'sentence-transformers/paraphrase-MiniLM-L6-v2',
@@ -46,33 +46,6 @@ def main():
         if threshold <= np.mean(similarity_scores):
             print('> Interaction!')
         print('\n')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 main()
