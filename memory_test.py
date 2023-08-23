@@ -1,5 +1,9 @@
 from sentence_transformers import SentenceTransformer
 from memory import Memory
+import os
+MODEL_CACHE_PATH = os.getenv("HF_MODEL_CACHE_PATH")
+if MODEL_CACHE_PATH is None:
+    MODEL_CACHE_PATH=''
 
 def main():
 
@@ -12,7 +16,7 @@ def main():
 
     sentence_model = SentenceTransformer(
         'sentence-transformers/paraphrase-MiniLM-L6-v2',
-        cache_folder='paraphrase-MiniLM-L6-v2'
+        cache_folder=MODEL_CACHE_PATH+'paraphrase-MiniLM-L6-v2'
     )
 
     print(sentence_model)

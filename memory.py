@@ -2,9 +2,12 @@ import numpy as np
 
 
 class Memory:
-    def __init__(self, key_sentences, key_sentence_ratings):
+    def __init__(self, key_sentences, key_sentence_ratings=None):
         self.key_sentences = key_sentences
-        self.key_ratings = key_sentence_ratings
+        if(key_sentence_ratings!=None):
+            self.key_ratings = key_sentence_ratings
+        else:
+            self.key_ratings=np.ones(len(key_sentences))
 
     def __len__(self):
         return len(self.key_sentences)
@@ -36,7 +39,9 @@ class Memory:
         return sentence_similarity_scores
 
     def get_priority(self, query, sentence_model, weighted, verbose=False):
-
+        '''
+        get_priority returns the location of the highest prority sentences, ordered from least to highest prio
+        '''
         sentence_similarity_scores = self.get_similarity_scores(query, sentence_model)
 
         if weighted:
@@ -65,6 +70,6 @@ class Memory:
         priority_sentences = [self.key_sentences[i] for i in priority][-num_sentences:]
 
         # Concatenate sentences to one prompt
-        prompt = ''.join(priority_sentences)
+        prompt = ','.join(priority_sentences)
 
         return prompt

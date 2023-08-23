@@ -1,6 +1,11 @@
 from transformers import LlamaTokenizer, LlamaForCausalLM
 import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
+MODEL_CACHE_PATH = os.getenv("HF_MODEL_CACHE_PATH")
+if MODEL_CACHE_PATH is None:
+    MODEL_CACHE_PATH=''
+
 
 
 """
@@ -19,13 +24,20 @@ def main():
     print(torch.cuda.device_count())
     print(torch.cuda.current_device())
 
-    tokenizer = LlamaTokenizer.from_pretrained('openlm-research/open_llama_3b_v2')
-    model = LlamaForCausalLM.from_pretrained(
-        'openlm-research/open_llama_3b_v2',
-        load_in_8bit=True,
-        device_map='auto',
-        cache_dir='open_llama_3b_v2'
-    )
+    # tokenizer = LlamaTokenizer.from_pretrained('openlm-research/open_llama_3b_v2')
+    # model = LlamaForCausalLM.from_pretrained(
+    #     'openlm-research/open_llama_3b_v2',
+    #     #load_in_8bit=True,
+    #     device_map='auto',
+    #     cache_dir='E:/__LLM_model_cache__/open_llama_3b_v2'
+    # )
+
+    tokenizer = AutoTokenizer.from_pretrained("databricks/dolly-v2-3b",
+                                              padding_side="left")
+    model = AutoModelForCausalLM.from_pretrained("databricks/dolly-v2-3b",
+                                                 device_map="auto",
+                                                 cache_dir=MODEL_CACHE_PATH+'/dolly-v2-3b',
+                                                 torch_dtype=torch.bfloat16)
 
     """
     os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"

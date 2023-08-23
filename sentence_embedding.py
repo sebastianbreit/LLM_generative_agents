@@ -1,6 +1,11 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
+import os
+MODEL_CACHE_PATH = os.getenv("HF_MODEL_CACHE_PATH")
+if MODEL_CACHE_PATH is None:
+    MODEL_CACHE_PATH=''
+
 
 class Memory:
     def __init__(self, key_sentences, key_sentence_ratings):
@@ -122,7 +127,7 @@ def main():
 
     sentence_model = SentenceTransformer(
         'sentence-transformers/paraphrase-MiniLM-L6-v2',
-        cache_folder='paraphrase-MiniLM-L6-v2'
+        cache_folder=MODEL_CACHE_PATH+'paraphrase-MiniLM-L6-v2'
     )
 
     # Key sentences that can be used for prompting
