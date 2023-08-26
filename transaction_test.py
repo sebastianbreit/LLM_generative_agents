@@ -38,7 +38,7 @@ buy_queries_easy=[]
 buy_queries_hard=[]
 for i_item,item in enumerate(query_items):
     item_queries.append([
-        f'I want to buy the {item}.',
+        f'I want to trade the {item}.',
         f'I want to sell the {item}.',
         f'Can you forge the {item} for me?',
     ])
@@ -70,7 +70,9 @@ abstract_items_memory=[
 concrete_items_memory=[
     'axe',
     'sword',
-    'mace'
+    'mace',
+    'hammer',
+    'dagger'
 ]
 combined_items_memory=abstract_items_memory+concrete_items_memory
 memory_list_items=[abstract_items_memory,concrete_items_memory,combined_items_memory]
@@ -82,30 +84,58 @@ other_action_memory=[
     'sell','forge','trade'
 ]
 negation_memory=[
-    'buy','not buy'
+    'not buy','not purchase','not acquire'
 ]
-memory_list_actions=[buy_synonyms_memory,other_action_memory,negation_memory]
+empty_memory=['']
+memory_list_actions=[buy_synonyms_memory,other_action_memory,negation_memory,empty_memory]
 
 def generate_q_short(query):
-  if(any(query in sublist for sublist in item_queries)): return 'item'
+  if(any(query in sublist for sublist in item_queries)): return 'alternatives'
   elif(any(query in sublist for sublist in buy_queries_easy)): return 'synonym_easy'
   elif(any(query in sublist for sublist in buy_queries_hard)): return 'synonym_hard'
   elif(query in random_queries): return 'random'
   else: return 'Error: query invalid / not found'
 
+def generate_q_a(query):
+    if any(buy_action in query for buy_action in ['buy','purchase','acquire']):
+        return 'buy'
+    elif ('sell' in query):
+        return 'sell'
+    elif ('forge' in query):
+        return 'forge'
+    elif ('trade' in query):
+        return 'trade'
+    else:
+        return 'other'
+
+def generate_q_i(query):
+    for item in query_items:
+        if (item in query):
+            return item
+    return 'No item'
+
+def generate_success(query):
+    for item in query_items[0:5]:
+        if (item in query):
+            return True
+    return False
+
 def generate_m_a_short(m_action):
-  if((m_action == buy_synonyms_memory)): return 'synonyms'
-  elif((m_action ==  other_action_memory)): return 'other'
-  elif((m_action ==  negation_memory)): return 'negation'
-  else: return 'Error: action invalid / not found'
+  if((m_action == buy_synonyms_memory)): return 'buy'
+  elif((m_action ==  other_action_memory)): return 'sell/forge/trade'
+  elif((m_action ==  negation_memory)): return 'not buy'
+  elif((m_action ==  empty_memory)): return 'empty'
+  else: return 'Error'
 
 def generate_m_i_short(m_item):
   if ((m_item ==  abstract_items_memory)):
       return 'abstract'
   elif ((m_item ==  concrete_items_memory)):
       return 'concrete'
+  elif ((m_item ==  combined_items_memory)):
+      return 'combined'
   else:
-      return 'Error: item invalid / not found'
+      return 'other / none'
 
 
 
@@ -124,7 +154,7 @@ def main():
     )
 
 
-    query_df = pd.DataFrame(columns=["q_short", "query", "m_a_short","m_i_short", "memory", "score_list", "avg_score", "max_score"])
+    query_df = pd.DataFrame(columns=["q_short","q_a","q_i", "query", "m_a","m_i", "memory", "score_list", "avg_score", "max_score","exp_success"])
     memory_df=pd.DataFrame(columns=['m_a','m_i','memory_list_complete'])
 
     for action_list in memory_list_actions:
@@ -134,8 +164,11 @@ def main():
             memory_list_complete = []
 
             for action in action_list:
-                for item in item_list:
-                    memory_list_complete.append(action+" "+item)
+                for inner_item in item_list:
+                    if action!='':
+                        memory_list_complete.append(action+" "+inner_item)
+                    else:
+                        memory_list_complete.append(action)
 
             memory_df.loc[len(memory_df)] = [m_a,m_i,memory_list_complete]
 
@@ -171,17 +204,21 @@ def main():
 def append_query_to_df(query, query_df, sentence_model, transaction_memory,m_a=None, m_i=None):
     similarity_scores = transaction_memory.get_similarity_scores(query, sentence_model)
     q_short = generate_q_short(query)
-    m_a_short = m_a
-    m_i_short = m_i
+    q_a=generate_q_a(query)
+    q_i=generate_q_i(query)
+    exp_success=generate_success(query)
     new_entry_list = [
         q_short,
+        q_a,
+        q_i,
         query,
-        m_a_short,
-        m_i_short,
+        m_a,
+        m_i,
         transaction_memory.key_sentences,
         similarity_scores,
         np.mean(similarity_scores),
-        np.max(similarity_scores)
+        np.max(similarity_scores),
+        exp_success
     ]
     # pd.concat([query_df, new_record], ignore_index=True)
     query_df.loc[len(query_df)] = new_entry_list
