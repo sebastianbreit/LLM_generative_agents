@@ -165,10 +165,7 @@ def main():
 
             for action in action_list:
                 for inner_item in item_list:
-                    if action!='':
-                        memory_list_complete.append(action+" "+inner_item)
-                    else:
-                        memory_list_complete.append(action)
+                    memory_list_complete.append(action+" "+inner_item)
 
             memory_df.loc[len(memory_df)] = [m_a,m_i,memory_list_complete]
 
