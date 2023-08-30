@@ -1,6 +1,6 @@
 from transformers import LlamaTokenizer, LlamaForCausalLM, AutoTokenizer, AutoModelForCausalLM
 from sentence_transformers import SentenceTransformer
-from memory import Memory
+from util.memory import Memory
 import torch
 import os
 MODEL_CACHE_PATH = os.getenv("HF_MODEL_CACHE_PATH")

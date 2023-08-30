@@ -4,7 +4,7 @@
 ## Setup
 
 - Clone the repository:
-	``
+	```
 	git clone git@github.com:sebastianbreit/LLM_generative_agents.git
 	```
 
@@ -121,6 +121,8 @@ even if they are not relevant for the current player input.
 Therefore, each memory has a corresponding numerical rating that can be multiplied with the **Similarity Score** of each memory. 
 This means memories can compensate for a low **Similarity Score** with a higher rating.
 
+The storing of NPC meories and the computation of similarity scores is realized by the **Memory** class that can be found in `memory.py`
+
 When generating text the **Causal LLM** might continue the dialogue from the point of view of the player or it might start to generate text from a narrator perspective.
 To avoid that, we limit the generated text to the NPCs part of the dialogue. 
 
@@ -137,7 +139,7 @@ Given the limited scope of this work, we implemented the single use case of a me
 We used the memory class to simulate a basic inventory function, where the memory contains only singular words of items that should be available for purchase.
 When evaluating whether or not the player should be able to purchase a specific item from the NPC, we evaluate the similarity score of the player's query against the items in memory and compare them against some arbitrary threshold.
 Depending on whether the similarity score is larger or smaller than that threshold, we use prefix injection to guide the language model's response to either approve or reject that request.
-The notebook **transaction_showcase** gives 2 positive and 2 negative examples of how such a guided interaction might look like.
+The notebook ``transaction_showcase.ipynb`` gives 2 positive and 2 negative examples of how such a guided interaction might look like.
 
 In order to determine a suitable threshold that is actually indicative of the similarity between player query and NPC memory, we simulated data using different query and memory designs and evaluated their impact on the similarity rating.
 We varied queries by changing the action verbs and the concrete items that were requested. We varied the memory content by changing the item descriptions (abstract item / concrete item) and action verbs.
@@ -158,7 +160,7 @@ We found a difference between different types of items (medieval metal weapon / 
 The use of different action verbs (buy/forge/sell/trade) resulted in no difference. 
 
 Based on these results, we defined our memory to simply include the available items without any actions associated with them.
-Using this implementation in the **transaction_showcase** notebook, we see that the transaction module can correctly determine, whether or not it should approve or reject a request and prepend the prompt to the language model with the appropriate prefix.
+Using this implementation in the ``transaction_showcase.ipynb`` notebook, we see that the transaction module can correctly determine, whether or not it should approve or reject a request and prepend the prompt to the language model with the appropriate prefix.
 While adding the correct prefix was generally successful, the language model followed that instruction mainly only for the first sentence that we restricted. Any sentence afterward seemed already less restricted, resulting in inconsistent and contradictory statements.
 A possible explanation for this behavior could be that we used a basic language model that was not finetuned with reinforcement learning to be helpful and follow instructions. Due to limited local hardware, we were not able to compare this behavior against a larger and better fine-tuned model.
 

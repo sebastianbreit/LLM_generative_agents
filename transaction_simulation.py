@@ -1,4 +1,4 @@
-from memory import Memory
+from util.memory import Memory
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import pandas as pd

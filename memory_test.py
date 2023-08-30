@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from memory import Memory
+from util.memory import Memory
 import os
 MODEL_CACHE_PATH = os.getenv("HF_MODEL_CACHE_PATH")
 if MODEL_CACHE_PATH is None:
