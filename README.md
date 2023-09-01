@@ -21,6 +21,18 @@
 	conda install -c conda-forge sentence-transformers 
 	```
 
+## Code Overview
+
+The `util` directory contains the **Memory** and the **SummaryGenerator** class.
+
+The `showcase` directory contains three notebook files that showcase the three main aspects of the NPC-Agent: dilogue, summary generation and transaction.
+
+The `test` directory contains three simple scripts that we used for testing the dialogue with the NPC-Agent, the sentence embedding and the summary generation. Although all aspects are already shown in the `showcase` directory we still decided to include the test scripts.
+
+The script `transaction_simulation.py` was used to generate data for the evaluation of the transaction aspect of the NPC-Agent. The script `transaction_evaluation.py` was used to evaluate the data and to generate the plots.
+
+The `data` directory contains diagrams and plots and a csv file with the results of `transaction_evaluation.py`.
+
 
 ## Introduction
 Our project aims to explore and build on the concept of "generative agents" by Park et al., 2023, which uses large language models to simulate virtual agents with stable long-term memories and goals.
@@ -114,14 +126,14 @@ Therefore, we only choose the memories that are relevant for the input text prov
 **Sentence Embedding Model** that embedds all memories of the NPC (called keys) and the input text of the player (called query). To determine which keys are 
 most relevant for the query we calulate the **Similarity Score** between the query and each key. The **Similarity Score** is simply the **cosine similarity** between the embedding of the query and the embedding of the key. The memories with the highest **Similarity Score** and are then used 
 to generate the **Initial Prompt**. This also means that for each player input during the dialogue a new **Initial Prompt** is generated. 
-An advantage of this method is that the **Memory** module can contain a very high number of memories, without causing a memory overloaf of the **Causal LLM**
+An advantage of this method is that the **Memory** module can contain a very high number of memories, without causing a memory overloaf of the **Causal LLM**.
 
 Not all memories have the same importance for the NPC. Sometimes it might be more important to use memories that are generally important for the NPC, 
 even if they are not relevant for the current player input.
 Therefore, each memory has a corresponding numerical rating that can be multiplied with the **Similarity Score** of each memory. 
 This means memories can compensate for a low **Similarity Score** with a higher rating.
 
-The storing of NPC meories and the computation of similarity scores is realized by the **Memory** class that can be found in `memory.py`
+The storing of NPC meories and the computation of similarity scores is realized by the **Memory** class that can be found in `memory.py`.
 
 When generating text the **Causal LLM** might continue the dialogue from the point of view of the player or it might start to generate text from a narrator perspective.
 To avoid that, we limit the generated text to the NPCs part of the dialogue. 
@@ -192,7 +204,7 @@ By making use of a **Summary LLM** the NPC-Agent is also able to generate new me
 There are different aspects that could be interesting for future work.
 One aspect could be to work with prefix injection and experiment with partially pre-determined answers and generated answers.
 Another aspect could be to extend the generation of dialogue also to non verbal character behaviour that also includes interaction with the environment. 
-Although there are LLMs trained for dialogue, we were not able to find state-of-the-art LLMs fine-tuned for the purpose of impersonating a NPC. Therefore, it could be interseting to specifically fine-tune a LLM for this purpose. This would also make it possible to develop a NPC-LLM and other NPC-related modules in parallel, such that both the LLM and the modules are taylored to each other.
+Although there are LLMs trained for dialogue, we were not able to find state-of-the-art LLMs fine-tuned for the purpose of impersonating a NPC. Therefore, it could be interesting to specifically fine-tune a LLM for this purpose. This would also make it possible to develop a NPC-LLM and other NPC-related modules in parallel, such that both the LLM and the modules are taylored to each other.
 
 
 

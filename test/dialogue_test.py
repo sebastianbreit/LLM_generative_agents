@@ -97,14 +97,14 @@ def main():
         output = tokenizer.decode(generation_output[0])
         split_string = output[input_length:].split(f'\n{player_name}:', 1)
         response = split_string[0]
-        #print(f"\n{npc_name}: " + response)
+        print(f"\n{npc_name}: " + response)
 
         conversation += response
         input_text += response
 
         # Print full text each step:
-        print('#################')
-        print(input_text)
+        #print('#################')
+        #print(input_text)
 
 
 main()
